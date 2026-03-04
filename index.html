@@ -1,7 +1,1001 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <meta http-equiv="refresh" content="0; url=https://continual-vlas.github.io/forget-me-not/">
-    <script>window.location.replace("https://continual-vlas.github.io/forget-me-not/");</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pretrained VLAs are Surprisingly Resistant to Forgetting in Continual Learning</title>
+    <meta name="description"
+        content="Project page for 'Pretrained Vision-Language-Action Models are Surprisingly Resistant to Forgetting in Continual Learning'.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- VARIABLES & RESET --- */
+        :root {
+            --bg-color: #FDFCF8;
+            --text-main: #202124;
+            --text-secondary: #5F6368;
+            --text-meta: #8C8C8C;
+            --accent: #B05A26;
+            --accent-light: #D4845A;
+            --line-color: #E0E0E0;
+            --card-bg: #FFFFFF;
+
+            --font-serif: "Charter", "Bitstream Charter", "Sitka Text", "Cambria", serif;
+            --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-mono: "SF Mono", "Menlo", "Monaco", "Courier New", monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- LAYOUT --- */
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+
+        /* --- HEADER / HERO --- */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--line-color);
+        }
+
+        h1.paper-title {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.25;
+            margin-bottom: 1.8rem;
+            color: var(--text-main);
+        }
+
+        /* --- AUTHORS --- */
+        .authors-block {
+            margin-bottom: 0.8rem;
+        }
+
+        .authors-list {
+            font-family: var(--font-sans);
+            font-size: 1.05rem;
+            color: var(--text-main);
+            line-height: 1.8;
+        }
+
+        .authors-list a {
+            color: var(--text-main);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--line-color);
+        }
+
+        .authors-list a:hover {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .affiliations {
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .affiliation-marker {
+            font-size: 0.75rem;
+            vertical-align: super;
+            color: var(--text-meta);
+        }
+
+        /* --- LINK BUTTONS --- */
+        .links-bar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .link-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.55rem 1.1rem;
+            border: 1px solid var(--line-color);
+            border-radius: 6px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: var(--card-bg);
+        }
+
+        .link-button:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: #fffbf9;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(176, 90, 38, 0.1);
+        }
+
+        .link-button svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h2 {
+            font-family: var(--font-serif);
+            font-size: 1.7rem;
+            font-weight: 600;
+            margin-top: 3.5rem;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--line-color);
+        }
+
+        h3 {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 0.8rem;
+            color: var(--text-main);
+        }
+
+        p,
+        li {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        strong {
+            color: var(--text-main);
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        a:hover {
+            color: var(--accent-light);
+            text-decoration: underline;
+        }
+
+        .section-quote {
+            font-family: var(--font-serif);
+            font-size: 1.45rem;
+            font-style: italic;
+            color: var(--text-main);
+            margin: 2.5rem 0;
+            padding-left: 1.5rem;
+            border-left: 3px solid var(--accent);
+            line-height: 1.4;
+            letter-spacing: -0.01em;
+        }
+
+        /* --- ABSTRACT BOX --- */
+        .abstract-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--line-color);
+            padding: 2rem 2.5rem;
+            border-radius: 8px;
+            margin: 2.5rem 0;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .abstract-label {
+            font-family: var(--font-sans);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 1.2rem;
+            letter-spacing: 0.08em;
+            text-align: center;
+        }
+
+        .abstract-box p {
+            text-align: justify;
+            margin-bottom: 0;
+        }
+
+        /* --- FIGURES --- */
+        .figure-container {
+            margin: 2rem 0;
+            padding: 1rem 0;
+            /* border-top: 1px solid var(--line-color);
+            border-bottom: 1px solid var(--line-color); */
+            text-align: center;
+        }
+
+        .figure-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .figure-container.wide {
+            width: 100%;
+            margin-left: 0;
+        }
+
+        .caption {
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            text-align: left;
+            max-width: 100%;
+        }
+
+        .caption strong {
+            color: var(--text-main);
+        }
+
+        /* --- KEY FINDINGS --- */
+        .key-findings {
+            padding-left: 1.5rem;
+            border-left: 3px solid var(--accent);
+            margin: 3rem 0;
+        }
+
+        .key-findings-label {
+            font-family: var(--font-sans);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            letter-spacing: 0.12em;
+        }
+
+        .finding-item {
+            margin-bottom: 2.2rem;
+        }
+
+        .finding-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .finding-title {
+            font-family: var(--font-serif);
+            font-size: 1.45rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.35;
+            margin-bottom: 0.5rem;
+        }
+
+        .finding-description {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-left: 0;
+        }
+
+        /* --- TABLES --- */
+        .table-block {
+            margin: 3rem 0;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border: 1px solid var(--line-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 6px;
+            border: 1px solid var(--line-color);
+            background: #fff;
+        }
+
+        .table-caption {
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+
+        .table-caption strong {
+            color: var(--text-main);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: #f8f7f4;
+            color: var(--text-main);
+            font-weight: 600;
+            padding: 0.8rem 1rem;
+            text-align: center;
+            border-bottom: 2px solid var(--line-color);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 0.6rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+            color: var(--text-secondary);
+        }
+
+        td:first-child,
+        th:first-child {
+            text-align: left;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #fdfcf8;
+        }
+
+        .highlight-val {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .model-name {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+
+        .section-divider {
+            border: none;
+            border-top: 1px solid var(--line-color);
+            margin: 0.5rem 0;
+        }
+
+        .vla-row td {
+            background: rgba(176, 90, 38, 0.08);
+        }
+
+        .vla-row:hover td {
+            background: rgba(176, 90, 38, 0.12);
+        }
+
+        .table-subtitle {
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .table-subtitle:first-of-type {
+            margin-top: 0;
+        }
+
+        /* --- BIBTEX --- */
+        .bibtex-section {
+            margin-top: 3rem;
+        }
+
+        .bibtex-block {
+            background-color: #f4f3ef;
+            padding: 1.5rem;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            overflow-x: auto;
+            white-space: pre;
+            color: var(--text-main);
+            border: 1px solid var(--line-color);
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: var(--card-bg);
+            border: 1px solid var(--line-color);
+            border-radius: 4px;
+            padding: 0.3rem 0.6rem;
+            cursor: pointer;
+            font-family: var(--font-sans);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            margin-top: 4rem;
+            border-top: 1px solid var(--line-color);
+            padding-top: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-meta);
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (min-width: 768px) {
+            h1.paper-title {
+                font-size: 2.6rem;
+            }
+
+            .container {
+                padding: 4rem 2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1.paper-title {
+                font-size: 1.7rem;
+            }
+
+            .abstract-box {
+                padding: 1.5rem;
+            }
+
+            .figure-container.wide img {
+                max-width: 100%;
+                margin-left: 0;
+            }
+
+            table {
+                font-size: 0.8rem;
+            }
+
+            th,
+            td {
+                padding: 0.5rem 0.6rem;
+            }
+        }
+
+        /* --- FADE-IN ANIMATION --- */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
 </head>
+
+<body>
+
+    <div class="container">
+
+        <!-- ====== HERO ====== -->
+        <header class="hero">
+            <h1 class="paper-title">Pretrained Vision-Language-Action Models are Surprisingly Resistant to Forgetting in
+                Continual Learning</h1>
+
+            <div class="authors-block">
+                <div class="authors-list">
+                    <a href="https://huihanl.github.io">Huihan Liu</a><span class="affiliation-marker">1</span>,
+                    <a href="https://changyeon.site/">Changyeon Kim</a><span class="affiliation-marker">1,2</span>,
+                    <a href="https://cranial-xix.github.io/">Bo Liu</a><span class="affiliation-marker">3</span>,
+                    <a href="https://minghuanliu.com">Minghuan Liu</a><span class="affiliation-marker">1</span>,
+                    <a href="https://www.cs.utexas.edu/~yukez/">Yuke Zhu</a><span class="affiliation-marker">1</span>
+                </div>
+                <div class="affiliations">
+                    <span class="affiliation-marker">1</span> The University of Texas at Austin &nbsp;&middot;&nbsp;
+                    <span class="affiliation-marker">2</span> KAIST &nbsp;&middot;&nbsp;
+                    <span class="affiliation-marker">3</span> Microsoft Superintelligence
+                </div>
+            </div>
+
+            <div class="links-bar">
+                <a href="static/continual_vla.pdf" class="link-button">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6z" />
+                    </svg>
+                    Paper
+                </a>
+                <a href="https://github.com/Continual-VLAs" class="link-button">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+                    </svg>
+                    Code
+                </a>
+
+            </div>
+        </header>
+
+        <!-- ====== TEASER FIGURE ====== -->
+        <div class="figure-container wide fade-in">
+            <div class="caption">
+                <strong>Comparison of continual learning performance between a pretrained VLA (GR00T N1.5) and
+                    a non-pretrained small policy model (BC-Transformer).</strong>
+                Each checkpoint corresponds to a model obtained by sequentially training over ten tasks under Experience
+                Replay (ER). Each matrix entry (i, j) denotes the success rate on Task j after training on Task i. We
+                compare a pretrained VLA (top) with a non-pretrained small BC policy (bottom) across multiple LIBERO
+                benchmark suites.
+            </div>
+            <img src="static/figures/teaser.png"
+                alt="Teaser: Comparison of continual learning performance between a pretrained VLA and a non-pretrained small policy model">
+        </div>
+
+        <!-- ====== KEY FINDINGS ====== -->
+        <div class="key-findings fade-in">
+            <div class="key-findings-label">Key Findings</div>
+
+            <div class="finding-item">
+                <div class="finding-title"><em>Pretrained VLAs are remarkably resistant to forgetting compared with
+                        smaller policy models trained from scratch.</em></div>
+                <div class="finding-description">Simple Experience Replay (ER) works surprisingly well on VLAs, able to
+                    achieve <strong><em>zero</em></strong> forgetting even with 2% of training data or even
+                    <strong><em>positive backward transfer</em></strong> on
+                    previous tasks.</div>
+            </div>
+
+            <div class="finding-item">
+                <div class="finding-title"><em>Pretraining plays an integral role in improving continual learning
+                        performance in both forward and backward transfer.</em></div>
+                <div class="finding-description">The pretrained knowledge in VLAs is especially effective for mitigating
+                    forgetting even at an extremely small replay dataset size. Furthermore, pretraining reduces
+                    forgetting while still maintaining a high success rate on new tasks, avoiding the trade-off between
+                    preserving knowledge and forward transfer ability.</div>
+            </div>
+
+            <div class="finding-item">
+                <div class="finding-title"><em>VLAs preserve relevant knowledge of prior tasks despite seemingly
+                        performance
+                        degradation from learning new ones.</em></div>
+                <div class="finding-description">Even when performance on previous tasks seems to degrade from
+                    catastrophic forgetting, the underlying knowledge is still preserved in the VLA's internal
+                    representation. Evidence for this lies in the fact that a few finetuning steps can quickly restore
+                    performance on past tasks.</div>
+            </div>
+        </div>
+
+        <!-- ====== ABSTRACT ====== -->
+        <div class="abstract-box fade-in">
+            <div class="abstract-label">Abstract</div>
+            <p>
+                Continual learning is a long-standing challenge in robot policy learning, where a policy must acquire
+                new skills over time without catastrophically forgetting previously learned ones. While prior work has
+                extensively studied continual learning in relatively small behavior cloning (BC) policy models trained
+                from scratch, its behavior in modern large-scale pretrained Vision-Language-Action (VLA) models remains
+                underexplored. In this work, we find that pretrained VLAs are remarkably resistant to forgetting
+                compared with smaller policy models trained from scratch. Simple Experience Replay (ER) works
+                surprisingly well on VLAs, sometimes achieving zero forgetting even with a small replay data size. Our
+                analysis reveals that pretraining plays a critical role in downstream continual learning performance:
+                large pretrained models mitigate forgetting with a small replay buffer size while maintaining strong
+                forward learning capabilities. Furthermore, we find that VLAs can retain relevant knowledge from prior
+                tasks despite performance degradation during learning new tasks. This knowledge retention enables rapid
+                recovery of seemingly forgotten skills through finetuning. Together, these insights imply that
+                large-scale pretraining fundamentally changes the dynamics of continual learning, enabling models to
+                continually acquire new skills over time with simple replay.
+            </p>
+        </div>
+
+        <!-- ====== SECTION: VLAs are Resistant to Forgetting ====== -->
+        <section class="fade-in">
+            <h2>VLAs are Surprisingly Resistant to Forgetting</h2>
+
+            <div class="section-quote">
+                Pretrained VLAs trained with experience replay (ER) surprisingly achieve <strong>near-zero,
+                    or even positive</strong> backward transfer, while maintaining a strong forward transfer.
+            </div>
+
+            <!-- Table 1: CL Metrics -->
+            <div class="table-block fade-in">
+                <div class="table-caption"><strong>Table:</strong> Continual learning performance on LIBERO benchmarks:
+                    Average Success Rate (SR ↑) and Negative Backward Transfer (NBT ↓). Results are with replay buffer
+                    size = 1000 (20% of dataset size per task).</div>
+                
+                <!-- Average Performance Table -->
+                <div class="table-subtitle">Average Performance</div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Method</th>
+                                <th>SR ↑</th>
+                                <th>NBT ↓</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="vla-row">
+                                <td class="model-name">Pi0</td>
+                                <td>0.768±.017</td>
+                                <td class="highlight-val">-0.016±.022</td>
+                            </tr>
+                            <tr class="vla-row">
+                                <td class="model-name">GR00T N1.5</td>
+                                <td>0.919±.011</td>
+                                <td class="highlight-val">0.027±.021</td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">BC-Diffusion</td>
+                                <td>0.696±.068</td>
+                                <td>0.127±.071</td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">BC-Transformer</td>
+                                <td>0.585±.066</td>
+                                <td>0.245±.080</td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">BC-ViT</td>
+                                <td>0.508±.142</td>
+                                <td>0.193±.082</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Per-Benchmark Performance Table -->
+                <div class="table-subtitle">Per-Benchmark Performance</div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Method</th>
+                                <th colspan="2">LIBERO-Spatial</th>
+                                <th colspan="2">LIBERO-Object</th>
+                                <th colspan="2">LIBERO-Goal</th>
+                                <th colspan="2">LIBERO-10</th>
+                            </tr>
+                            <tr>
+                                <th>SR ↑</th>
+                                <th>NBT ↓</th>
+                                <th>SR ↑</th>
+                                <th>NBT ↓</th>
+                                <th>SR ↑</th>
+                                <th>NBT ↓</th>
+                                <th>SR ↑</th>
+                                <th>NBT ↓</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="vla-row">
+                                <td class="model-name">Pi0</td>
+                                <td>0.879±.008</td>
+                                <td class="highlight-val">0.019±.019</td>
+                                <td>0.897±.011</td>
+                                <td class="highlight-val">-0.011±.034</td>
+                                <td>0.732±.015</td>
+                                <td class="highlight-val">-0.005±.010</td>
+                                <td>0.563±.028</td>
+                                <td class="highlight-val">-0.068±.018</td>
+                            </tr>
+                            <tr class="vla-row">
+                                <td class="model-name">GR00T N1.5</td>
+                                <td>0.940±.013</td>
+                                <td class="highlight-val">0.007±.009</td>
+                                <td>0.975±.004</td>
+                                <td class="highlight-val">0.019±.013</td>
+                                <td>0.943±.004</td>
+                                <td class="highlight-val">0.023±.017</td>
+                                <td>0.820±.017</td>
+                                <td class="highlight-val">0.059±.035</td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">BC-Diffusion</td>
+                                <td>0.663±.074</td>
+                                <td>0.050±.070</td>
+                                <td>0.847±.069</td>
+                                <td>0.025±.056</td>
+                                <td>0.809±.089</td>
+                                <td>0.230±.101</td>
+                                <td>0.464±.024</td>
+                                <td>0.201±.044</td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">BC-Transformer</td>
+                                <td>0.659±.058</td>
+                                <td>0.299±.096</td>
+                                <td>0.595±.112</td>
+                                <td>0.132±.120</td>
+                                <td>0.709±.022</td>
+                                <td>0.356±.042</td>
+                                <td>0.376±.034</td>
+                                <td>0.192±.019</td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">BC-ViT</td>
+                                <td>0.513±.069</td>
+                                <td>0.171±.065</td>
+                                <td>0.543±.268</td>
+                                <td>0.077±.134</td>
+                                <td>0.661±.024</td>
+                                <td>0.319±.022</td>
+                                <td>0.316±.062</td>
+                                <td>0.204±.063</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="section-quote">
+                Pretrained VLAs are resistant to forgetting especially under a low replay data regime.
+            </div>
+
+            <!-- Figure: BWT vs Buffer Size (moved after Table 1) -->
+            <div class="figure-container fade-in">
+                <div class="caption">
+                    <strong>Backward Transfer (BWT) across different replay buffer sizes.</strong>
+                    Each subplot shows BWT as a function of replay buffer size ({0.2%, 2%, 20%}) for all methods across
+                    benchmarks. Shaded regions indicate ±1 standard deviation. Higher BWT indicates more forgetting;
+                    values near zero indicate no forgetting. Pretrained VLAs (Pi0, GR00T) maintain near-zero BWT even
+                    with small replay buffers, while non-pretrained models (BC-Transformer, BC-ViT, BC-Diffusion Policy)
+                    show 2–4× more forgetting.
+                </div>
+                <img src="static/figures/bwt_vs_sample_size.png"
+                    alt="Backward Transfer across different replay buffer sizes" style="max-width: 80%;">
+            </div>
+
+        </section>
+
+        <!-- ====== SECTION: Role of Pretraining ====== -->
+        <section class="fade-in">
+            <h2>Pretraining Plays an Integral Role in Improving Continual Learning Performance</h2>
+
+            <div class="section-quote">
+                Pretraining enables models to mitigate forgetting while maintaining strong forward learning
+                capabilities.
+            </div>
+
+            <!-- Figure: Pareto Frontier -->
+            <div class="figure-container fade-in">
+                <div class="caption">
+                    <strong>Pareto frontier of average NBT vs. replay buffer size.</strong> As the replay
+                    buffer size decreases, the gap between pretrained and non-pretrained models increases, indicating
+                    that at smaller buffer sizes, pretraining plays an increasingly important role in mitigating
+                    forgetting. When the curve reaches 0, it means zero forgetting; below 0 indicates positive backward
+                    transfer.
+                </div>
+                <img src="static/figures/pareto_frontier.png" alt="Pareto frontier of NBT vs replay buffer size"
+                    style="max-width: 80%;">
+            </div>
+
+            <!-- Figure: Buffer Size Comparison -->
+            <div class="figure-container wide fade-in">
+                <div class="caption">
+                    <strong>Comparison of forgetting performance across different buffer sizes (10, 100,
+                        1000)</strong> for Pi0 pretrained, Pi0 initialized from PaliGemma, and Pi0 trained from scratch.
+                    Each panel shows per-task success rates as training progresses through the sequence of 10 tasks.
+                </div>
+                <img src="static/figures/buffer_size_comparison.png" alt="Comparison of forgetting across buffer sizes">
+            </div>
+
+
+
+            <!-- Figure: Knowledge Transfer Curves -->
+            <div class="figure-container wide fade-in">
+                <div class="caption">
+                    <strong>Knowledge transfer curves across benchmarks.</strong> We compare Pi0 trained from
+                    scratch (orange), Pi0 from PaliGemma (green), and Pi0 pretrained (blue) under different replay
+                    buffer sizes (10, 100, 1000). Pretrained models exhibit steadily increasing knowledge transfer over
+                    time, whereas from-scratch models show slower growth—low forgetting in non-pretrained models can
+                    arise from inability to learn new tasks.
+                </div>
+                <img src="static/figures/knowledge_transfer_curves.png" alt="Knowledge transfer curves">
+            </div>
+
+        </section>
+
+        <!-- ====== SECTION: Knowledge Retention ====== -->
+        <section class="fade-in">
+            <h2>VLAs Retain Knowledge that is Seemingly Forgotten</h2>
+
+            <div class="section-quote">
+                A drastic decrease in prior task performance does not necessarily indicate complete forgetting of
+                task-relevant knowledge in pretrained VLAs.
+                <br>
+                <br>
+                Instead, this knowledge is still retained, as prior task performance can often be rapidly recovered with
+                minimal finetuning.
+            </div>
+
+            <!-- Figure: Methodology -->
+            <div class="figure-container wide fade-in">
+                <div class="caption">
+                    <strong>Methodology for investigating VLA knowledge loss in continual learning.</strong>
+                    (a) Continual learning pipeline of learning Tasks k-1, k, k+1 sequentially.
+                    (b) Identifying knowledge loss in the vision-language (VL) backbone and action head by swapping
+                    components.
+                    (c) Recovering vision-language knowledge with finetuning.
+                </div>
+                <img src="static/figures/methodology.png" alt="Methodology for investigating VLA knowledge loss">
+            </div>
+
+            <div class="section-quote">
+                Knowledge loss in VLAs is not monolithic.
+            </div>
+
+            <p>
+                We find that knowledge is compartmentalized across VLA components:
+                the vision-language (VL) backbone is the dominant source of forgetting,
+                while the action head retains most of its prior task knowledge:
+            </p>
+
+            <!-- Figure: Component Swapping -->
+            <div class="figure-container fade-in">
+                <div class="caption">
+                    <strong>Comparison of mean success rates retained under different vision-language
+                        and action component combinations.</strong> Knowledge loss in VLAs is not monolithic but affects
+                    different modules separately. The VL backbone is the dominant source of forgetting. Knowledge loss
+                    correlates with task diversity—LIBERO-10 (most diverse) exhibits the largest drop.
+                </div>
+                <img src="static/figures/component_swapping.png" alt="Component swapping analysis"
+                    style="max-width: 80%;">
+            </div>
+
+            <div class="section-quote">
+                VLAs preserve relevant knowledge of prior tasks despite performance degradation from learning new ones.
+            </div>
+
+            <p>
+                In the finetuning experiments, <strong>Pi0</strong> reaches peak performance within a small fraction of
+                training steps,
+                significantly faster than its initial training. In contrast, <strong>BC-Transformer</strong> requires a
+                similar
+                number of steps as initial training to reach peak performance, suggesting that task knowledge has been
+                largely erased:
+            </p>
+
+            <!-- Figure: Recovery Comparison -->
+            <div class="figure-container wide fade-in">
+                <div class="caption">
+                    <strong>Performance comparison averaged across tasks.</strong> Each column represents a
+                    different LIBERO benchmark, where the x-axis shows the percentage of training steps during
+                    finetuning. Pi0 reaches peak performance within a small fraction of training steps—significantly
+                    faster than initial training—indicating task knowledge is preserved and reused. BC-Transformer
+                    requires comparable or more steps, suggesting knowledge is largely erased.
+                </div>
+                <img src="static/figures/recovery_comparison.png" alt="Performance recovery comparison">
+            </div>
+
+            <p>
+                In terms of <em>recovery efficiency</em>, <strong>Pi0</strong> consistently recovers peak performance
+                with fewer than 10% of the original training steps, whereas
+                <strong>BC-Transformer</strong> often requires a comparable or greater number of steps:
+            </p>
+
+            <!-- Table 4: Recovery Efficiency -->
+            <div class="table-block fade-in">
+                <div class="table-caption"><strong>Table: Recovery efficiency.</strong> Finetuning steps (as ratio of
+                    original training time) needed to regain the peak success rate. Pi0 consistently recovers with fewer
+                    than
+                    10% of original steps.</div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Benchmark</th>
+                                <th>Pi0</th>
+                                <th>BC-Transformer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="model-name">LIBERO-Spatial</td>
+                                <td class="highlight-val">0.066</td>
+                                <td>1.36</td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">LIBERO-10</td>
+                                <td class="highlight-val">0.105</td>
+                                <td>1.87</td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">LIBERO-Object</td>
+                                <td class="highlight-val">0.067</td>
+                                <td>1.80</td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">LIBERO-Goal</td>
+                                <td class="highlight-val">0.062</td>
+                                <td>0.33</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== BIBTEX ====== -->
+        <section class="bibtex-section fade-in">
+            <h2>BibTeX</h2>
+            <div class="bibtex-block" id="bibtex-content"><button class="copy-btn"
+                    onclick="copyBibtex()">Copy</button>@article{liu2026continualvla,
+    title = {Pretrained Vision-Language-Action Models are Surprisingly Resistant to Forgetting in Continual
+    Learning},
+    author = {Liu, Huihan and Kim, Changyeon and Liu, Bo and Liu, Minghuan and Zhu, Yuke},
+    journal = {arXiv preprint},
+    year = {2026}
+}</div>
+        </section>
+
+        <footer>
+            &copy; 2026 Project Authors.
+        </footer>
+
+    </div>
+
+    <script>
+        // --- Scroll-triggered fade-in ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // --- Copy BibTeX ---
+        function copyBibtex() {
+            const bibtex = document.getElementById('bibtex-content').innerText;
+            // Remove the "Copy" button text from the copied content
+            const cleanBibtex = bibtex.replace('Copy\n', '').trim();
+            navigator.clipboard.writeText(cleanBibtex).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy', 2000);
+            });
+        }
+    </script>
+
+</body>
+
 </html>
