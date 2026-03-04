@@ -5,6 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pretrained VLAs are Surprisingly Resistant to Forgetting in Continual Learning</title>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7JNRE394DJ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-7JNRE394DJ');
+    </script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="static/figures/icon.png">
+    <link rel="apple-touch-icon" href="static/figures/icon.png">
     <meta name="description"
         content="Project page for 'Pretrained Vision-Language-Action Models are Surprisingly Resistant to Forgetting in Continual Learning'.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,9 +62,8 @@
         /* --- HEADER / HERO --- */
         .hero {
             text-align: center;
-            margin-bottom: 3rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid var(--line-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
         }
 
         h1.paper-title {
@@ -140,6 +150,28 @@
             width: 16px;
             height: 16px;
             fill: currentColor;
+        }
+
+        /* --- ICON DIVIDER --- */
+        .icon-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2rem;
+            gap: 1.5rem;
+        }
+
+        .divider-line {
+            flex: 1;
+            max-width: 250px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--line-color), transparent);
+        }
+
+        .divider-icon {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
         }
 
         /* --- TYPOGRAPHY --- */
@@ -552,7 +584,13 @@
                     </svg>
                     Code
                 </a>
+            </div>
 
+            <!-- Stylish Icon Divider -->
+            <div class="icon-divider">
+                <span class="divider-line"></span>
+                <img src="static/figures/icon_page_small.png" alt="Project Icon" class="divider-icon">
+                <span class="divider-line"></span>
             </div>
         </header>
 
